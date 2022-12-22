@@ -1,32 +1,45 @@
+import { useRef } from "react";
 import classes from "./Checkout.module.css";
 
 const Checkout = (props) => {
+  const nameInputRef = useRef();
+  const streetInputRef = useRef();
+  const postalCodeInputRef = useRef();
+  const cityInputRef = useRef();
+
   const confirmHandler = (event) => {
     event.preventDefault();
+
+    const enteredName = nameInputRef.current;
+    const enteredStreet = streetInputRef.current;
+    const enteredPostalCode = postalCodeInputRef.current;
+    const enteredCity = cityInputRef.current;
   };
 
   return (
-    <form onSubmit={confirmHandler}>
+    <form className={classes.form} onSubmit={confirmHandler}>
       <div className={classes.control}>
         <label htmlFor="name">Your Name</label>
-        <input type="text" id="name"></input>
+        <input type="text" id="name" ref={nameInputRef} />
       </div>
       <div className={classes.control}>
         <label htmlFor="street">Street</label>
-        <input type="text" id="street"></input>
+        <input type="text" id="street" ref={streetInputRef} />
       </div>
       <div className={classes.control}>
         <label htmlFor="postal">Postal Code</label>
-        <input type="text" id="postal"></input>
+        <input type="text" id="postal" ref={postalCodeInputRef} />
       </div>
       <div className={classes.control}>
         <label htmlFor="city">City</label>
-        <input type="text" id="city"></input>
+        <input type="text" id="city" ref={cityInputRef} />
       </div>
-      <button type="button" onClick={props.onCancel}>
-        Cancel
-      </button>
-      <button>Confirm</button>
+      <div className={classes.actions}>
+        <button type="button" onClick={props.onCancel}>
+          Cancel
+        </button>
+        <button className={classes.submit}>Confirm</button>
+      </div>
     </form>
   );
 };
@@ -60,3 +73,13 @@ export default Checkout;
 // 6.1 Add new function "confirmHandler" where we get a "event" object and we will get that automatically because I bind this function to the "onSubmit" event. Add to "<form onSubmit={confirmHandler}>"
 // 6.2 to ensure that the browser default which would be to send an HTTP request is prevented (this request is not sent). With that this button will triggered this form submission and will therefore trigger "confirmHandler" function.
 //~~ ADDING A CHECKOUT FORM ~~
+
+//~~ STYLING ~~
+// STEP: 1
+// Now make sure we do get the values the user entered. We then validate them however we want. And we then also either show an error message if something's wrong with entered data or we submit it to a server. Start with getting the entered data:
+// 1.1 Use "useRef" to get the values only once the form is submitted. import "useRef"
+// 1.2 Then we can create a reference by calling "useRef" and we'll get a reference for our "nameInputRef" and other for all inputs
+// 1.3 Need to connect thise refs to the form elements in JSX code with special "ref={}" prop.
+// Now this refs are connected and now we can use them to read whatever the user entered when the form is submitted.
+// 1.4 Now for this, we've got our "confirmHandler" and here we can then get "enteredName" by reaching out to the "nameInputRef.current" - current always gives you access to the actual value stored in the ref. Since we can access to input element we can access ".value" because every input elements objects has a value property that holds the actual value entered in that input element. Now I can validate this.
+//~~ STYLING ~~
