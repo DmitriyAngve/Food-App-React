@@ -141,7 +141,3 @@ export default AvailableMeals;
 // 2.5 Since that returns a promise, I can add ".then()" to handle success cases when the promise fulfills successfully. And add ".catch()" to handle errors coming up inside of the promise
 // 2.6 I wanna catch the error we're getting and move code "setIsLoading(false);setHttpError(error.message)" into catch block
 // ~~ HANDLING THE ERROR ~~
-
-//~~ ADDING A CHECKOUT FORM ~~
-//
-//~~ ADDING A CHECKOUT FORM ~~
