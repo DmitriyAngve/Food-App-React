@@ -47,6 +47,13 @@ const Checkout = (props) => {
     if (!formIsValid) {
       return;
     }
+
+    props.onConfirm({
+      name: enteredName,
+      street: enteredStreet,
+      city: enteredCity,
+      postalCode: enteredPostalCode,
+    });
   };
 
   const nameControlClasses = `${classes.control} ${
@@ -168,3 +175,14 @@ export default Checkout;
 // 2.7 In name input instead of just adding the control class, set up a template literal to always inject the control class into the sting, but to also inject another class if that input should be invalid. If "formInputsValidity.name" is true, I don't wanna add ane extra string, but if it false, I wanna add classes.invalid here. With that we add the extra invalid class to that list of classes if that input is not valid.
 // 2.8 Add new variables: "const nameControlClasses = `${classes.control} ${ formInputsValidity.name ? "" : classes.invalid}`" and use it in all inputs. we just point at "nameControlClasses".
 // ~~ ADDING FORM VALIDATION ~~
+
+//
+
+// ~~ SUBMITTING AND SENDING CART DATA ~~
+// CAME FROM Cart.js
+// STEP: 2
+// "onConfirm" as the prop name hance in here (in Checkout.js) in "confirmHandler". Once we validated everything down here, we now wanna call "props.onConfirm" - that prop name we're expecting from Cart.js and now forward that userData, which should be an object, because I'm not expecting multiple arguments (because I expecting only one argument - the collected "userData").
+// 2.1 let's group that "userData" into an object: "name: enteredName," and so on
+// With that we pass the data from the "Checkout" Component to the "Cart" Component.
+// GO TO Checkout.js --->>>
+// ~~ SUBMITTING AND SENDING CART DATA ~~

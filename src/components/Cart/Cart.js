@@ -26,6 +26,19 @@ const Cart = (props) => {
     setIsCheckout(true);
   };
 
+  const submitOrderHandler = (userData) => {
+    fetch(
+      "https://react-project-angve-3-default-rtdb.firebaseio.com/order.json",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          user: userData,
+          orderedItems: cartCtx.items,
+        }),
+      }
+    );
+  };
+
   const cartItems = (
     <ul className={classes["cart-items"]}>
       {cartCtx.items.map((item) => (
@@ -61,7 +74,9 @@ const Cart = (props) => {
         <span>Total Amount</span>
         <span>{totalAmount}</span>
       </div>
-      {isCheckout && <Checkout onCancel={props.onClose} />}
+      {isCheckout && (
+        <Checkout onConfirm={submitOrderHandler} onCancel={props.onClose} />
+      )}
       {!isCheckout && modalActions}
     </Modal>
   );
@@ -93,3 +108,20 @@ export default Cart;
 // 5.1 Here we need to set our "onCancel" prop. And as a value I wanna point at the "onClose" prop value to forward that event even further. "{isCheckout && <Checkout onCancel={props.onClose} />}" And now we have some props drilling here. So we're passing props through multiple levels of components.
 // GO TO Checkout.js --->>>
 //~~ ADDING A CHECKOUT FORM ~~
+
+//
+
+// ~~ SUBMITTING AND SENDING CART DATA ~~
+// STEP: 1
+// 1.1 Add a new function in taht "Cart" Component. In this function I expect to get the "userData" (as a argument, as a parameter). We already get access to the cart data through the cart context. And therefore, all we now gotta do is make sure that this "submitOrder" function is called from inside to the "Checkout" Component and that it receives that "userData".
+// 1.2 So for that, I'll pass it to the "Checkout" Component through a prop. Add "onConfirm" (name custom), where I point at the "submitOrderHandler". ("<Checkout onConfirm={submitOrederHandler}...").
+// GO TO Checkout.js --->>>
+// CAME FROM Checkout.js
+// STEP: 3
+// In there we now wanna send the request to the backend and we wanna send both the user data as well as the cart data.
+// 3.1 Now for this, we can use the "fetch" function (in "submitOrderHandler" ) and send the request to Firebase (to Firebase URL) and then to a new Node of our choice. ("fetch("https://react-project-angve-3-default-rtdb.firebaseio.com/order.json");")
+// order.json will be created dynamically
+// 3.2 Important thing: this request should be a "POST" request. So we need to pass this configuration object as a second argument to "fetch" and set "method" to "POST".
+// 3.3 We then also need to add the "body" and set this to "JSON.stringify", since we need to send JSON data and pass in all our data and pass in all our data and that's an object with the "userData". We could set a user field "user: userData" and pass the user data we're getting from "userData" (as a argument or parameter) as a value for that field and then maybe add a ordered items field "orderedItems: " - that should then be our cart. Now for this we have our cart context ("cartCtx") where we get our items. So we can then set: "orderedItems: cartCtx.items"
+// That's the data we're then sending to the
+// ~~ SUBMITTING AND SENDING CART DATA ~~
