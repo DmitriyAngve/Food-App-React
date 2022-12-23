@@ -20,10 +20,10 @@ const Checkout = (props) => {
   const confirmHandler = (event) => {
     event.preventDefault();
 
-    const enteredName = nameInputRef.current;
-    const enteredStreet = streetInputRef.current;
-    const enteredPostalCode = postalCodeInputRef.current;
-    const enteredCity = cityInputRef.current;
+    const enteredName = nameInputRef.current.value;
+    const enteredStreet = streetInputRef.current.value;
+    const enteredPostalCode = postalCodeInputRef.current.value;
+    const enteredCity = cityInputRef.current.value;
 
     const enteredNameIsValid = !isEmpty(enteredName);
     const enteredStreetIsValid = !isEmpty(enteredStreet);
@@ -53,6 +53,7 @@ const Checkout = (props) => {
       <div className={classes.control}>
         <label htmlFor="name">Your Name</label>
         <input type="text" id="name" ref={nameInputRef} />
+        {!formInputValidity.name && <p>Please enter a valid name!</p>}
       </div>
       <div className={classes.control}>
         <label htmlFor="street">Street</label>
@@ -142,5 +143,5 @@ export default Checkout;
 // Now, we could work with the touched state in addition to the validity state. The goal is to update the correct field for the defferent inputs here when we submitted the form to update those true values with the actual validity after we tried to submit the form.
 // 2.4 Before we even derive "formIsValid" set the "setFormInputsValidity" state to new object ("setFormInputsValidity({});"). And here I wanna set the name field to enteredNameIsValid: "name: enteredNameIsValid" and so on
 // I'll use those inferred validities, which we infer as new values for the different keys in this state object. We don't need the function form of this state updating function for updating here, because I am overriding the entire state with a brand new object where I do assign new values to all my keys.
-// 2.5 We can now utilize that in the JSX code. For example. to show an error message.
+// 2.5 We can now utilize that in the JSX code. For example. to show an error message. For name we could check if "formInputsValidity.name" (so if we dive into the name field), if that is NOT true than we wanna show a paragraph "{!formInputValidity.name && <p>Please enter a valid name!</p>}"
 // ~~ ADDING FORM VALIDATION ~~
