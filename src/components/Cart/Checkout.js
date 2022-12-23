@@ -1,7 +1,17 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import classes from "./Checkout.module.css";
 
+const isEmpty = (value) => value.trim() === "";
+const isFiveChars = (value) => value.trim().length === 5;
+
 const Checkout = (props) => {
+  const [formInputValidity, setFormInputsValidity] = useState({
+    name: true,
+    street: true,
+    city: true,
+    postalCode: true,
+  });
+
   const nameInputRef = useRef();
   const streetInputRef = useRef();
   const postalCodeInputRef = useRef();
@@ -14,6 +24,28 @@ const Checkout = (props) => {
     const enteredStreet = streetInputRef.current;
     const enteredPostalCode = postalCodeInputRef.current;
     const enteredCity = cityInputRef.current;
+
+    const enteredNameIsValid = !isEmpty(enteredName);
+    const enteredStreetIsValid = !isEmpty(enteredStreet);
+    const enteredCityIsValid = !isEmpty(enteredCity);
+    const enteredPostalCodeIsValid = isFiveChars(enteredPostalCode);
+
+    setFormInputsValidity({
+      name: enteredNameIsValid,
+      street: enteredStreetIsValid,
+      city: enteredCityIsValid,
+      postalCode: enteredPostalCodeIsValid,
+    });
+
+    const formIsValid =
+      enteredNameIsValid &&
+      enteredStreetIsValid &&
+      enteredCityIsValid &&
+      enteredPostalCodeIsValid;
+
+    if (!formIsValid) {
+      return;
+    }
   };
 
   return (
@@ -83,3 +115,32 @@ export default Checkout;
 // Now this refs are connected and now we can use them to read whatever the user entered when the form is submitted.
 // 1.4 Now for this, we've got our "confirmHandler" and here we can then get "enteredName" by reaching out to the "nameInputRef.current" - current always gives you access to the actual value stored in the ref. Since we can access to input element we can access ".value" because every input elements objects has a value property that holds the actual value entered in that input element. Now I can validate this.
 //~~ STYLING ~~
+
+//
+
+// ~~ ADDING FORM VALIDATION ~~
+// I wanna check that all my values are not empty and "enteredPostalCode" ihave five digits long
+// STEP: 1
+// For this I'll add helper functions outside of the Component function.
+// 1.1 First function: "const isEmpty = (value) => value.trim() === "" " - return "true" if "value" is empty.
+// 1.2 Second function: "const isFiveChars = value =>  value.trim().length === 5"
+// This two helper func can be used to now validate those entered values.
+// 1.3 We can add a new constant "enteredNameIsValid", inside of "confirmHandler", and that should be true if we can call "isEmpty(enteredName)" and pass in the "enteredName" and that then returns "false" (if it's not empty). "const enteredNameIsValid = !isEmpty(enteredName)" => if the "enteredName" is not empty, this is valid.
+// 1.4 Repeat this for the street.
+// 1.5 Repeat this for the city.
+// 1.6 For Postal Code => "const enteredPostalCodeIsValid = isFiveChars(enteredCity)"
+// Now we can check if the overall form is valid, by combining all these values. Only if all four constants here have a value of true, the overall form is valid.
+// 1.7 Add constant "const formIsValid = enteredNameIsValid && enteredStreetIsValid && enteredCityIsValid && enteredPostalCodeIsValid;"
+// 1.8 Add "ifcheck" "if(!formIsValid) {}". i'll check if not "formIsValid" and then I wanna set an error and give some feedback to the user regarding what went wrong.
+// For that, I will return to here to not continue with code execution because later I will submit the cart data here and I don't wanna reach that code if the form is invalid. But before we make it ti this "ifcheck" I wanna update some state to give the user some feedback.
+// Let's use "useState"
+// STEP: 2
+// Now I will register a new state here with "useState()". We could use four individual state slices or one combined slice (I choose 1 combined)
+// 2.1 Import useState
+// 2.2 Call "useState()"
+// 2.3 "const [formInputValidity, setFormInputsValidity] = useState({})" initial state of "useState({})" - object, where I have a name field, a street field, postalCode and city. I wanna have true of false as values here, determining whether the field is valid or not, innitially, I'll treat them as valid event though they technically aren't but I don't wanna show error messages at the beginning
+// Now, we could work with the touched state in addition to the validity state. The goal is to update the correct field for the defferent inputs here when we submitted the form to update those true values with the actual validity after we tried to submit the form.
+// 2.4 Before we even derive "formIsValid" set the "setFormInputsValidity" state to new object ("setFormInputsValidity({});"). And here I wanna set the name field to enteredNameIsValid: "name: enteredNameIsValid" and so on
+// I'll use those inferred validities, which we infer as new values for the different keys in this state object. We don't need the function form of this state updating function for updating here, because I am overriding the entire state with a brand new object where I do assign new values to all my keys.
+// 2.5 We can now utilize that in the JSX code. For example. to show an error message.
+// ~~ ADDING FORM VALIDATION ~~
