@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import React, { useContext, useState } from "react";
 
 import Modal from "../UI/Modal";
 import CartItem from "./CartItem";
@@ -8,6 +8,8 @@ import Checkout from "./Checkout";
 
 const Cart = (props) => {
   const [isCheckout, setIsCheckout] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [didSubmit, setDidSubmit] = useState(false);
 
   const cartCtx = useContext(CartContext);
 
@@ -26,8 +28,9 @@ const Cart = (props) => {
     setIsCheckout(true);
   };
 
-  const submitOrderHandler = (userData) => {
-    fetch(
+  const submitOrderHandler = async (userData) => {
+    setIsSubmitting(true);
+    await fetch(
       "https://react-project-angve-3-default-rtdb.firebaseio.com/order.json",
       {
         method: "POST",
@@ -37,6 +40,8 @@ const Cart = (props) => {
         }),
       }
     );
+    setIsSubmitting(false);
+    setDidSubmit(true);
   };
 
   const cartItems = (
@@ -66,18 +71,37 @@ const Cart = (props) => {
       )}
     </div>
   );
-
-  return (
-    <Modal onClose={props.onClose}>
+  const cartModalContent = (
+    <React.Fragment>
       {cartItems}
       <div className={classes.total}>
         <span>Total Amount</span>
-        <span>{totalAmount}</span>
+        <span>$ {totalAmount}</span>
       </div>
       {isCheckout && (
         <Checkout onConfirm={submitOrderHandler} onCancel={props.onClose} />
       )}
       {!isCheckout && modalActions}
+    </React.Fragment>
+  );
+
+  const isSubmittingModalContent = <p>Sending order data...</p>;
+  const didSubmittingModalContent = (
+    <React.Fragment>
+      <p>Successfully sent the order!</p>
+      <div className={classes.actions}>
+        <button className={classes.button} onClick={props.onClose}>
+          Close
+        </button>
+      </div>
+    </React.Fragment>
+  );
+
+  return (
+    <Modal onClose={props.onClose}>
+      {!isSubmitting && !didSubmit && cartModalContent}
+      {isSubmitting && isSubmittingModalContent}
+      {!isSubmitting && didSubmit && didSubmittingModalContent}
     </Modal>
   );
 };
@@ -125,3 +149,33 @@ export default Cart;
 // 3.3 We then also need to add the "body" and set this to "JSON.stringify", since we need to send JSON data and pass in all our data and pass in all our data and that's an object with the "userData". We could set a user field "user: userData" and pass the user data we're getting from "userData" (as a argument or parameter) as a value for that field and then maybe add a ordered items field "orderedItems: " - that should then be our cart. Now for this we have our cart context ("cartCtx") where we get our items. So we can then set: "orderedItems: cartCtx.items"
 // That's the data we're then sending to the
 // ~~ SUBMITTING AND SENDING CART DATA ~~
+
+//
+
+// ~~ SMALL CHANGES (ADDING BETTER USER FEEDBACK) ~~
+// Let's handle with submission state.
+// STEP: 1
+// 1.1 For this, we need "useState" and then manage a new piece of state in the "Cart" Component "const [isSubmitting, setIsSubmitting] = useState(false)" and initially, that's false, but I wanna set it to true as soon as the "submitOrderHandler" gets called.
+// 1.2 Add in "submitOrderHandler" "setIsSubmitting(true)" to true. Then I wanna wait for "fetch" function to finish (all in "submitOrderHandler")
+// 1.3 For this, we can "await" this and turn function to async function
+// WE CAN store our "await fetch" to "response". We could now use the "response" to check the status code and porentially throwing error, which we then would have to handle to also show an error message.
+// 1.4 We submit this then we await this, and herefore once the request is done and we got a response, e can "setIsSubmitting" back to false.
+// 1.5 Now I wanna make sure that we show some success message,and therefore I'll add another state: "const [didSubmitting, setDidSubmitting] = useState(false);" initially that's also false, but this should be set to true as soon as we did submit our data.
+// 1.6 Call "setDidSubmitting(true)" below the "setIsSubmitting".
+// And now we can work with these two states in our component. I wanna swap the entire const.
+// 1.7 Add a new constant "const cartModalContent" and in there I'll store all that code of <Modal></ Modal>. And wrap it in <></ React.Fragment>(because sibling JSX code is not allowed).
+// 1.8 "cartModalContent" add to a "return <Modal onClose={props.onClose}>{cartModalContent}</Modal>"
+// 1.9 Another constant "isSubmittingModalContent" that's the content that should be shown if we are currently submitting.
+// I wanna show "carModalContent" only if we're not submitting. if we are submitting, I wanna show the "isSubmittingModalContent"
+// 1.10 Another constant "const didSubmittingModalContent = <p>Successfully sent the order!</p>".
+// 1.11 Add "didSubmittingModalContent" to <Modal> "{didSubmit && didSubmittingModalContent}"
+// 1.12 And therefore we only show the "cartModalContent" if we're not submitting and we did not submit yet.
+// So if not submitting and not "didSubmit", then show the "cartModalContent". I always show the "isSubmittingModalContent" if we are submitting. And if we "didSubmit" I wanna show the "didSubmitModalContent", maybe if we are not currently submitting.
+// 1.13 Less tweak: "{!isSubmitting && didSubmit && didSubmittingModalContent}" we can't really be submitting and have submitted already.
+// STEP: 2
+// We can add a new button.
+// 2.1 Wrap "didSubmittingModalContent" into a "<React.Fragment>" and next add a button.
+// 2.2 Copy code from "modalActions" with tweaks.
+// NOW NEED TO CLEAR CART AFTER ORDER.
+// GO TO crt-context.js ---->>>>
+// ~~ SMALL CHANGES (ADDING BETTER USER FEEDBACK) ~~
