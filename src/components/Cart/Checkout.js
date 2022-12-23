@@ -2,10 +2,11 @@ import { useRef, useState } from "react";
 import classes from "./Checkout.module.css";
 
 const isEmpty = (value) => value.trim() === "";
-const isFiveChars = (value) => value.trim().length === 5;
+const isFiveChars = (value) =>
+  value.trim().length === 5 || value.trim().length === 6;
 
 const Checkout = (props) => {
-  const [formInputValidity, setFormInputsValidity] = useState({
+  const [formInputsValidity, setFormInputsValidity] = useState({
     name: true,
     street: true,
     city: true,
@@ -48,24 +49,42 @@ const Checkout = (props) => {
     }
   };
 
+  const nameControlClasses = `${classes.control} ${
+    formInputsValidity.name ? "" : classes.invalid
+  }`;
+  const streetControlClasses = `${classes.control} ${
+    formInputsValidity.street ? "" : classes.invalid
+  }`;
+  const cityControlClasses = `${classes.control} ${
+    formInputsValidity.city ? "" : classes.invalid
+  }`;
+  const postalCodeControlClasses = `${classes.control} ${
+    formInputsValidity.postalCode ? "" : classes.invalid
+  }`;
+
   return (
     <form className={classes.form} onSubmit={confirmHandler}>
-      <div className={classes.control}>
+      <div className={nameControlClasses}>
         <label htmlFor="name">Your Name</label>
         <input type="text" id="name" ref={nameInputRef} />
-        {!formInputValidity.name && <p>Please enter a valid name!</p>}
+        {!formInputsValidity.name && <p>Please enter a valid name!</p>}
       </div>
-      <div className={classes.control}>
+      <div className={streetControlClasses}>
         <label htmlFor="street">Street</label>
         <input type="text" id="street" ref={streetInputRef} />
+        {!formInputsValidity.street && <p>Please enter a valid street!</p>}
       </div>
-      <div className={classes.control}>
+      <div className={cityControlClasses}>
         <label htmlFor="postal">Postal Code</label>
         <input type="text" id="postal" ref={postalCodeInputRef} />
+        {!formInputsValidity.postalCode && (
+          <p>Please enter a valid postal code (5 characters long)!</p>
+        )}
       </div>
-      <div className={classes.control}>
+      <div className={postalCodeControlClasses}>
         <label htmlFor="city">City</label>
         <input type="text" id="city" ref={cityInputRef} />
+        {!formInputsValidity.city && <p>Please enter a valid city!</p>}
       </div>
       <div className={classes.actions}>
         <button type="button" onClick={props.onCancel}>
@@ -144,4 +163,8 @@ export default Checkout;
 // 2.4 Before we even derive "formIsValid" set the "setFormInputsValidity" state to new object ("setFormInputsValidity({});"). And here I wanna set the name field to enteredNameIsValid: "name: enteredNameIsValid" and so on
 // I'll use those inferred validities, which we infer as new values for the different keys in this state object. We don't need the function form of this state updating function for updating here, because I am overriding the entire state with a brand new object where I do assign new values to all my keys.
 // 2.5 We can now utilize that in the JSX code. For example. to show an error message. For name we could check if "formInputsValidity.name" (so if we dive into the name field), if that is NOT true than we wanna show a paragraph "{!formInputValidity.name && <p>Please enter a valid name!</p>}"
+// 2.6 Add this check to each inputs
+// In Checkout.module.css add invalid class, let's use it. If an input is invalid to show extra error styles
+// 2.7 In name input instead of just adding the control class, set up a template literal to always inject the control class into the sting, but to also inject another class if that input should be invalid. If "formInputsValidity.name" is true, I don't wanna add ane extra string, but if it false, I wanna add classes.invalid here. With that we add the extra invalid class to that list of classes if that input is not valid.
+// 2.8 Add new variables: "const nameControlClasses = `${classes.control} ${ formInputsValidity.name ? "" : classes.invalid}`" and use it in all inputs. we just point at "nameControlClasses".
 // ~~ ADDING FORM VALIDATION ~~
