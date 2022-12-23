@@ -42,6 +42,7 @@ const Cart = (props) => {
     );
     setIsSubmitting(false);
     setDidSubmit(true);
+    cartCtx.clearCart();
   };
 
   const cartItems = (
@@ -177,5 +178,13 @@ export default Cart;
 // 2.1 Wrap "didSubmittingModalContent" into a "<React.Fragment>" and next add a button.
 // 2.2 Copy code from "modalActions" with tweaks.
 // NOW NEED TO CLEAR CART AFTER ORDER.
-// GO TO crt-context.js ---->>>>
+// GO TO CartProvider.js ---->>>>
 // ~~ SMALL CHANGES (ADDING BETTER USER FEEDBACK) ~~
+
+//
+
+// ~~ CLEAR CART AFTER ORDER ~~
+// CAME FROM CartProvider.js
+// STEP: 4
+// When we submit our order in the "submitOrderHandler" I want to use "cartCtx" and call "clearCart" to clear the cart once we're done submitting
+// ~~ CLEAR CART AFTER ORDER ~~
