@@ -1,4 +1,4 @@
-# 5 - Food-App-complete
+# 5 - Food-App-complete-React
 
 In this application I used all core react features in action, including components, state, and much more, including work with Firebase.
 
